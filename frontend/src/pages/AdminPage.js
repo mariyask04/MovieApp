@@ -10,8 +10,13 @@ const AdminPage = () => {
   const [editMovie, setEditMovie] = useState(null);
 
   const fetchMovies = async () => {
-    const res = await API.get("/movies?page=1&limit=50");
-    setMovies(res.data.movies);
+    try {
+      const res = await API.get("/movies?page=1&limit=50");
+      setMovies(res.data.movies || []);
+    } catch (err) {
+      console.error(err);
+      setMovies([]);
+    }
   };
 
   useEffect(() => {

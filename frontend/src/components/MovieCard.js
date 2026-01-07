@@ -8,8 +8,8 @@ const MovieCard = ({ movie, onEdit, onDelete }) => {
       )}
       <CardContent>
         <Typography variant="h6">{movie.title}</Typography>
-        <Typography variant="body2">{movie.description}</Typography>
-        <Typography variant="subtitle2">Rating: {movie.rating}</Typography>
+        <Typography variant="body2">{movie.plot}</Typography>
+        <Typography variant="subtitle2">Rating: ⭐{movie.imdbrating}</Typography>
         {onEdit && <Button onClick={onEdit} sx={{ mt: 1 }}>Edit</Button>}
         {onDelete && <Button onClick={onDelete} color="error" sx={{ mt: 1 }}>Delete</Button>}
       </CardContent>

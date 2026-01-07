@@ -27,17 +27,42 @@ export const getMovies = async (req, res) => {
 // GET /movies/search
 export const searchMovies = async (req, res) => {
   try {
-    const { q } = req.query;
+    const { q = "", sort = "title", page = 1, limit = 10 } = req.query;
 
-    const movies = await Movie.find({
-      $text: { $search: q }
+    const pageNum = Number(page);
+    const limitNum = Number(limit);
+
+    // Text search
+    let query = {};
+    if (q) query = { $text: { $search: q } };
+
+    // Sorting
+    const sortOptions = {
+      title: { title: 1 },
+      imdbrating: { imdbrating: -1 },
+      released: { released: -1 },
+      runtime: { runtime: 1 }
+    };
+
+    const movies = await Movie.find(query)
+      .sort(sortOptions[sort] || { title: 1 })
+      .skip((pageNum - 1) * limitNum)
+      .limit(limitNum);
+
+    const total = await Movie.countDocuments(query);
+
+    res.json({
+      movies,
+      total,
+      page: pageNum,
+      pages: Math.ceil(total / limitNum)
     });
-
-    res.json(movies);
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: error.message });
   }
 };
+
 
 // GET /movies/sorted
 export const getSortedMovies = async (req, res) => {
